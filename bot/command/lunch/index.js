@@ -1,6 +1,9 @@
 const api = require('../../api');
 const context = require('./context');
 const userContext = require('../user/context');
+const commandContext = require('../context');
+const path = require('path');
+let actionName = '';
 
 const menuList = () => {
   menus = context.availableMenu;
@@ -16,7 +19,7 @@ const menuList = () => {
 }
 
 const startReceiveMenu = async (roomId, waitMinute = 30) => {
-  context.enabled = true;
+  commandContext.enabledOn = actionName;
   context.timer[roomId] = setTimeout(async () => { await closeReceiveMenu(roomId) }, waitMinute * 60000);
   context.selectedMenu = {};
 
@@ -41,7 +44,7 @@ const closeReceiveMenu = async (roomId) => {
   await displayUnappliedUser(roomId);
   await api.sendMessage(roomId, text);
 
-  context.enabled = false;
+  commandContext.enabledOn = undefined;
   clearTimeout(context.timer[roomId]);
 }
 
@@ -106,6 +109,8 @@ const getUnappliedUser = () => {
 }
 
 module.exports = ({ accountId, roomId }, { action, args }) => {
+  actionName = action
+
   let waitMinute = undefined;
   if (!isNaN(args[0])) waitMinute = args[0];
   else if (args[0] === '도움') {
@@ -118,11 +123,11 @@ module.exports = ({ accountId, roomId }, { action, args }) => {
 
   switch (action) {
     case '점심':
-      if (context.enabled) break;
+      if (commandContext.enabledOn) break;
       startReceiveMenu(roomId, waitMinute);
       break;
     case '마감':
-      if (!context.enabled) break;
+      if (!commandContext.enabledOn) break;
       closeReceiveMenu(roomId);
       break;
     default:
