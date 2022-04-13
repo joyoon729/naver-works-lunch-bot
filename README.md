@@ -36,3 +36,18 @@
 
 `!음료`  
 <img width="400" alt="beverage" src="https://user-images.githubusercontent.com/20259189/163132452-340fc9d9-b502-4010-a500-762eaba1d664.png">
+
+
+## How to install
+### Bot Message Callback 서버 준비
+1. 봇이 받는 메시지를 처리하고 응답해줄 서버가 필요하다.
+2. HTTPS 인증서 설치가 완료된 서버를 준비한다. (네이버 웍스 API는 HTTPS만 지원)
+3. 본 리포지토리를 클론한다. `git clone https://github.com/joyoon729/naver-works-lunch-bot.git`
+### `.botAuth.json` 수정  
+1. [네이버 웍스 개발자 콘솔](https://developers.worksmobile.com/kr/console/)에서 `.botAuth.json`에 누락돼 있는 AIP ID 및 키를 발급받는다.
+    - [네이버 웍스 API 공통 가이드](https://developers.worksmobile.com/kr/document/2002001?lang=ko)를 참고한다.
+2. [네이버 웍스 개발자 콘솔 - Bot](https://developers.worksmobile.com/kr/console/bot/view)에서 봇을 만들고 `.botAuth.json`에 누락돼 있는 botID를 입력한다.
+3. [네이버 웍스 Bot document](https://developers.worksmobile.com/kr/document/1005004?lang=ko)를 참고해 생성한 봇에 내 네이버 웍스 도메인을 등록한다.  
+### 서버 시작
+1. `npm start` 
+
