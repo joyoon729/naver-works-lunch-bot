@@ -48,8 +48,8 @@ const displayHelp = async (roomId) => {
   text += "  - ![선택할 메뉴 번호]\n";
   text += "  - !마감\n";
   text += "  - !음료 메뉴\n";
-  text += "  - !음료 추가|등록\n";
-  text += "  - !음료 삭제\n";
+  text += "  - !음료 추가|등록 [메뉴 명]\n";
+  text += "  - !음료 삭제 [메뉴 명]\n";
   text += "  - !음료 도움";
 
   await api.sendMessage(roomId, text);
