@@ -1,5 +1,4 @@
 const api = require('./api');
-const context = require('./context');
 const execCommand = require('./command');
 const { BotError } = require('./errors');
 
@@ -10,11 +9,11 @@ const parse = (msg) => {
 }
 
 module.exports = async (req, res) => {
+  let roomId = '';
   try {
     const type = req.body.type;
     const accountId = req.body.source.accountId;
-    const roomId = req.body.source.roomId;
-    context.roomId = roomId;  // update roomId to context
+    roomId = req.body.source.roomId;
 
     switch (type) {
       // 사용자가 메시지(채팅) 보낼 때
@@ -51,7 +50,7 @@ module.exports = async (req, res) => {
   } catch (err) {
     console.log(err);
     if (err instanceof BotError) {
-      await api.sendMessage(context.roomId, err.message);
+      await api.sendMessage(roomId, err.message);
     }
     res.end();
   }
