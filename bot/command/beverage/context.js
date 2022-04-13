@@ -1,5 +1,5 @@
 module.exports = {
-  enabled: false,
+  availableMenu: {},
   selectedMenu: {},
   timer: {}
 }

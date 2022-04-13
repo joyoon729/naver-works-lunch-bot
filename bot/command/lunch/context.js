@@ -1,5 +1,4 @@
 module.exports = {
-  enabled: false,
   selectedMenu: {},
   availableMenu: {
     '도시락': ['도시락', 'ㄷㅅㄹ', '도'],

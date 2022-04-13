@@ -2,8 +2,30 @@ const api = require('../../api');
 const context = require('./context');
 const userContext = require('../user/context');
 const commandContext = require('../context');
-const path = require('path');
-let actionName = '';
+const { WrongCommandError, ExclusiveCommandError } = require('../../errors');
+
+module.exports = async ({ accountId, roomId }, { action, args }) => {
+  let waitMinute = undefined;
+  if (!isNaN(args[0])) waitMinute = args[0];
+  else if (args[0] === '도움') {
+    await displayHelp(roomId);
+    return;
+  } else if (args[0] === '메뉴') {
+    await displayMenu(roomId);
+    return;
+  }
+
+  switch (action) {
+    case '점심':
+      await startReceiveMenu(roomId, action, waitMinute);
+      break;
+    case '마감':
+      await closeReceiveMenu(roomId);
+      break;
+    default:
+      receiveMenu(accountId, action);
+  }
+}
 
 const menuList = () => {
   menus = context.availableMenu;
@@ -18,8 +40,10 @@ const menuList = () => {
   return message;
 }
 
-const startReceiveMenu = async (roomId, waitMinute = 30) => {
-  commandContext.enabledOn = actionName;
+const startReceiveMenu = async (roomId, action, waitMinute = 30) => {
+  if (commandContext.enabledOn) throw new ExclusiveCommandError();
+
+  commandContext.enabledOn = action
   context.timer[roomId] = setTimeout(async () => { await closeReceiveMenu(roomId) }, waitMinute * 60000);
   context.selectedMenu = {};
 
@@ -50,13 +74,13 @@ const closeReceiveMenu = async (roomId) => {
 
 const receiveMenu = (accountId, chosenMenu) => {
   const menus = context.availableMenu;
-
   for (let menu in menus) {
-    if (menu === chosenMenu) {
-      context.selectedMenu[accountId] = chosenMenu;
+    if (menus[menu].includes(chosenMenu)) {
+      context.selectedMenu[accountId] = menu;
       return;
     }
   }
+  throw new WrongCommandError(`잘못된 메뉴 - ${chosenMenu}`);
 }
 
 const countMenu = () => {
@@ -104,33 +128,5 @@ const getUnappliedUser = () => {
   for (let user in selectedMenu) {
     delete users[user];
   }
-  console.log(users);
   return users;
-}
-
-module.exports = ({ accountId, roomId }, { action, args }) => {
-  actionName = action
-
-  let waitMinute = undefined;
-  if (!isNaN(args[0])) waitMinute = args[0];
-  else if (args[0] === '도움') {
-    displayHelp(roomId);
-    return;
-  } else if (args[0] === '메뉴') {
-    displayMenu(roomId);
-    return;
-  }
-
-  switch (action) {
-    case '점심':
-      if (commandContext.enabledOn) break;
-      startReceiveMenu(roomId, waitMinute);
-      break;
-    case '마감':
-      if (!commandContext.enabledOn) break;
-      closeReceiveMenu(roomId);
-      break;
-    default:
-      receiveMenu(accountId, action);
-  }
 }

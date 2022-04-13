@@ -1,7 +1,18 @@
 module.exports = {
-  '명령어': 'listCommand',
-  '점심': 'lunch',
-  '마감': 'lunch',
-  '유저': 'user',
-  '음료': 'beverage',
+  '명령어': {
+    name: 'listCommand',
+    exclusive: false
+  },
+  '점심': {
+    name: 'lunch',
+    exclusive: true
+  },
+  '음료': {
+    name: 'beverage',
+    exclusive: true
+  },
+  '유저': {
+    name: 'user',
+    exclusive: false
+  },
 }

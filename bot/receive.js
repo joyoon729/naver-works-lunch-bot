@@ -1,7 +1,7 @@
 const api = require('./api');
 const context = require('./context');
 const execCommand = require('./command');
-const { WrongCommandError } = require('./errors');
+const { BotError } = require('./errors');
 
 const parse = (msg) => {
   if (msg[0] !== '!') return;
@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
       case 'message':
         const text = req.body.content.text;
         const command = parse(text);
-        if (command) execCommand(req.body.source, command);
+        if (command) await execCommand(req.body.source, command);
         break;
 
       // 사용자가 대화방에 초대 됐을 때
@@ -50,7 +50,7 @@ module.exports = async (req, res) => {
     res.end();
   } catch (err) {
     console.log(err);
-    if (err instanceof WrongCommandError) {
+    if (err instanceof BotError) {
       await api.sendMessage(context.roomId, err.message);
     }
     res.end();

@@ -20,6 +20,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // initialize user context
 const initUserContext = require('./bot/command/user/initContext');
 initUserContext().then().catch();
+const initBeverageContext = require('./bot/command/beverage/initContext');
+initBeverageContext().then().catch();
 
 app.use('/', bot);
 
